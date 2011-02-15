@@ -1,9 +1,9 @@
 ===============================================================================
-                        The hts_engine API version 1.03
-                             release May 14, 2010
+      The HMM-Based Speech Synthesis Engine "hts_engine API" version 1.04
+                           release December 25, 2010
 
 
-The hts_engine API is an API version of hts_engine which has been releases
+The hts_engine API is an API version of hts_engine which has been released
 since HTS version 1.1. It has been being developed by the HTS working group
 (see "Who we are" below) and some graduate students in Nagoya Institute of
 Technology (see "AUTHORS" in the same directory).
@@ -20,8 +20,8 @@ work, and to permit persons to whom this work is furnished to do so) subject to
 the conditions in the following license:
 
 /* ----------------------------------------------------------------- */
-/*           The HMM-Based Speech Synthesis System (HTS)             */
-/*           hts_engine API developed by HTS Working Group           */
+/*           The HMM-Based Speech Synthesis Engine "hts_engine API"  */
+/*           developed by HTS Working Group                          */
 /*           http://hts-engine.sourceforge.net/                      */
 /* ----------------------------------------------------------------- */
 /*                                                                   */
@@ -76,7 +76,7 @@ justify ourselves to our various sponsors. We also strongly encourage you to
    software
  * report bugs, where possible with bug fixes, that are found
 
-See "COPYING" in the same directory for details.
+See also "COPYING" file in the current directory for details.
 
 *******************************************************************************
                                  Installation
@@ -93,7 +93,7 @@ Reference manual of hts_engine API is available at
 http://hts-engine.sourceforge.net/
 
 *******************************************************************************
-                                  Acknowledgements
+                               Acknowledgements
 *******************************************************************************
 
 Keiichi Tokuda
@@ -115,6 +115,7 @@ Synthesis System. Current members are
  Keiichiro Oura      http://www.sp.nitech.ac.jp/~uratec/
  (Design and Development, Main Maintainer)
  Kei Hashimoto       http://www.sp.nitech.ac.jp/~bonanza/
+ Sayaka Shiota       http://www.sp.nitech.ac.jp/~sayaka/
  Heiga Zen
  Junichi Yamagishi   http://homepages.inf.ed.ac.uk/jyamagis/
  Tomoki Toda         http://spalab.naist.jp/~tomoki/index_e.html

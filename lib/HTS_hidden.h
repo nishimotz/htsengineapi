@@ -1,6 +1,6 @@
 /* ----------------------------------------------------------------- */
-/*           The HMM-Based Speech Synthesis System (HTS)             */
-/*           hts_engine API developed by HTS Working Group           */
+/*           The HMM-Based Speech Synthesis Engine "hts_engine API"  */
+/*           developed by HTS Working Group                          */
 /*           http://hts-engine.sourceforge.net/                      */
 /* ----------------------------------------------------------------- */
 /*                                                                   */
@@ -41,6 +41,19 @@
 /* OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE           */
 /* POSSIBILITY OF SUCH DAMAGE.                                       */
 /* ----------------------------------------------------------------- */
+
+#ifndef HTS_HIDDEN_H
+#define HTS_HIDDEN_H
+
+#ifdef __cplusplus
+#define HTS_HIDDEN_H_START extern "C" {
+#define HTS_HIDDEN_H_END   }
+#else
+#define HTS_HIDDEN_H_START
+#define HTS_HIDDEN_H_END
+#endif                          /* __CPLUSPLUS */
+
+HTS_HIDDEN_H_START;
 
 /* hts_engine libraries */
 #include "HTS_engine.h"
@@ -106,7 +119,7 @@ void HTS_free(void *p);
 #define STEPINC  1.2
 #define W1       1.0
 #define W2       1.0
-#define GV_MAX_ITERATION 0
+#define GV_MAX_ITERATION 5
 
 /*  -------------------------- audio ------------------------------  */
 
@@ -148,9 +161,15 @@ void HTS_Audio_close(HTS_Audio * as);
 #define IRLENG    96
 #endif                          /* HTS_EMBEDDED */
 
+#define PULSELISTSIZE 512
+
 /* for MGLSA filter */
 #define NORMFLG1 TRUE
 #define NORMFLG2 FALSE
 #define MULGFLG1 TRUE
 #define MULGFLG2 FALSE
 #define NGAIN    FALSE
+
+HTS_HIDDEN_H_END;
+
+#endif                          /* !HTS_HIDDEN_H */
