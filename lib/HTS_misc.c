@@ -66,6 +66,8 @@ HTS_MISC_C_START;
 #include "EST_walloc.h"
 #endif                          /* FESTIVAL */
 
+#define DISABLE_HTS_ERROR 1 /* nishimoto */
+
 /* HTS_byte_swap: byte swap */
 static int HTS_byte_swap(void *p, const int size, const int block)
 {
@@ -89,6 +91,7 @@ static int HTS_byte_swap(void *p, const int size, const int block)
 /* HTS_error: output error message */
 void HTS_error(const int error, char *message, ...)
 {
+#if DISABLE_HTS_ERROR
    va_list arg;
 
    fflush(stdout);
@@ -107,6 +110,7 @@ void HTS_error(const int error, char *message, ...)
 
    if (error > 0)
       exit(error);
+#endif
 }
 
 /* HTS_get_fp: wrapper for fopen */
