@@ -107,10 +107,10 @@ void HTS_error(const int error, char *message, ...)
    va_end(arg);
 
    fflush(stderr);
+#endif
 
    if (error > 0)
       exit(error);
-#endif
 }
 
 /* HTS_get_fp: wrapper for fopen */
