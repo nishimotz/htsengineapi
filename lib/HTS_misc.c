@@ -91,7 +91,7 @@ static int HTS_byte_swap(void *p, const int size, const int block)
 /* HTS_error: output error message */
 void HTS_error(const int error, char *message, ...)
 {
-#if DISABLE_HTS_ERROR
+#ifndef DISABLE_HTS_ERROR
    va_list arg;
 
    fflush(stdout);
