@@ -719,12 +719,16 @@ void HTS_Vocoder_initialize(HTS_Vocoder * v, const int m, const int stage,
    v->p1 = -1.0;
    v->sw = 0;
    v->x = 0x55555555;
+#if 0
    /* open audio device */
    if (0 < buff_size && buff_size <= 48000) {
       v->audio = (HTS_Audio *) HTS_calloc(1, sizeof(HTS_Audio));
       HTS_Audio_open(v->audio, rate, buff_size);
    } else
       v->audio = NULL;
+#else
+   v->audio = NULL;
+#endif
    /* init buffer */
    v->freqt_buff = NULL;
    v->freqt_size = 0;
@@ -853,9 +857,10 @@ void HTS_Vocoder_synthesize(HTS_Vocoder * v, const int m, double lf0,
          xs = (short) x;
       if (rawdata)
          rawdata[rawidx++] = xs;
+#if 0
       if (v->audio)
          HTS_Audio_write(v->audio, xs);
-
+#endif
       if (!--i) {
          for (i = 0; i <= m; i++)
             v->c[i] += v->cinc[i];
@@ -933,11 +938,13 @@ void HTS_Vocoder_clear(HTS_Vocoder * v)
          v->c = NULL;
       }
       /* close audio device */
+#if 0
       if (v->audio != NULL) {
          HTS_Audio_close(v->audio);
          HTS_free(v->audio);
          v->audio = NULL;
       }
+#endif
       if (v->pulse_list != NULL)
          HTS_free(v->pulse_list);
    }
