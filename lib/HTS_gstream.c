@@ -148,8 +148,10 @@ void HTS_GStreamSet_create(HTS_GStreamSet * gss, HTS_PStreamSet * pss,
                              volume, &gss->gspeech[i * fperiod], audio);
    }
    HTS_Vocoder_clear(&v);
+#if 0
    if (audio)
       HTS_Audio_flush(audio);
+#endif
 }
 
 /* HTS_GStreamSet_get_total_nsample: get total number of sample */

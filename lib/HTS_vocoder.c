@@ -848,8 +848,10 @@ void HTS_Vocoder_synthesize(HTS_Vocoder * v, const int m, double lf0,
          xs = (short) x;
       if (rawdata)
          rawdata[rawidx++] = xs;
+#if 0
       if (audio)
          HTS_Audio_write(audio, xs);
+#endif
 
       if (!--i) {
          for (i = 0; i <= m; i++)

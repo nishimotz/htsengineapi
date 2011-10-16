@@ -659,7 +659,9 @@ typedef struct _HTS_Global {
 /* HTS_Engine: Engine itself. */
 typedef struct _HTS_Engine {
    HTS_Global global;           /* global settings */
+#if 0
    HTS_Audio audio;             /* audio output */
+#endif
    HTS_ModelSet ms;             /* set of duration models, HMMs and GV models */
    HTS_Label label;             /* label */
    HTS_SStreamSet sss;          /* set of state streams */
