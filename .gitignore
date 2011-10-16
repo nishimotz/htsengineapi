@@ -1,0 +1,11 @@
+Makefile
+*/*.a
+*/*.o
+Makefile
+*/Makefile
+config.log
+config.status
+bin/hts_engine.exe
+bin/.deps
+lib/.deps
+autom4te.cache
