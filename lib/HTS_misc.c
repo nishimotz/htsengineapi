@@ -89,6 +89,7 @@ static int HTS_byte_swap(void *p, const int size, const int block)
 /* HTS_error: output error message */
 void HTS_error(const int error, char *message, ...)
 {
+#if 0
    va_list arg;
 
    fflush(stdout);
@@ -104,7 +105,7 @@ void HTS_error(const int error, char *message, ...)
    va_end(arg);
 
    fflush(stderr);
-
+#endif
    if (error > 0)
       exit(error);
 }
