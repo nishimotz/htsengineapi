@@ -4,7 +4,7 @@
 /*           http://hts-engine.sourceforge.net/                      */
 /* ----------------------------------------------------------------- */
 /*                                                                   */
-/*  Copyright (c) 2001-2010  Nagoya Institute of Technology          */
+/*  Copyright (c) 2001-2011  Nagoya Institute of Technology          */
 /*                           Department of Computer Science          */
 /*                                                                   */
 /*                2001-2008  Tokyo Institute of Technology           */
@@ -59,6 +59,30 @@ HTS_VOCODER_C_START;
 
 /* hts_engine libraries */
 #include "HTS_hidden.h"
+
+static const double HTS_pade[21] = {
+   1.00000000000,
+   1.00000000000,
+   0.00000000000,
+   1.00000000000,
+   0.00000000000,
+   0.00000000000,
+   1.00000000000,
+   0.00000000000,
+   0.00000000000,
+   0.00000000000,
+   1.00000000000,
+   0.49992730000,
+   0.10670050000,
+   0.01170221000,
+   0.00056562790,
+   1.00000000000,
+   0.49993910000,
+   0.11070980000,
+   0.01369984000,
+   0.00095648530,
+   0.00003041721
+};
 
 /* HTS_movem: move memory */
 static void HTS_movem(double *a, double *b, const int nitem)
@@ -148,10 +172,10 @@ static double HTS_mlsadf2(double x, const double *b, const int m,
 
 /* HTS_mlsadf: functions for MLSA filter */
 static double HTS_mlsadf(double x, const double *b, const int m, const double a,
-                         const int pd, double *d, double *pade)
+                         const int pd, double *d)
 {
    const double aa = 1 - a * a;
-   const double *ppade = &(pade[pd * (pd + 1) / 2]);
+   const double *ppade = &(HTS_pade[pd * (pd + 1) / 2]);
 
    x = HTS_mlsadf1(x, b, m, a, aa, pd, d, ppade);
    x = HTS_mlsadf2(x, b, m, a, aa, pd, &d[2 * (pd + 1)], ppade);
@@ -701,7 +725,7 @@ static void HTS_Vocoder_end_excitation(HTS_Vocoder * v, const int nlpf)
 /* HTS_Vocoder_initialize: initialize vocoder */
 void HTS_Vocoder_initialize(HTS_Vocoder * v, const int m, const int stage,
                             HTS_Boolean use_log_gain, const int rate,
-                            const int fperiod, int buff_size)
+                            const int fperiod)
 {
    /* set parameter */
    v->stage = stage;
@@ -719,16 +743,6 @@ void HTS_Vocoder_initialize(HTS_Vocoder * v, const int m, const int stage,
    v->p1 = -1.0;
    v->sw = 0;
    v->x = 0x55555555;
-#if 0
-   /* open audio device */
-   if (0 < buff_size && buff_size <= 48000) {
-      v->audio = (HTS_Audio *) HTS_calloc(1, sizeof(HTS_Audio));
-      HTS_Audio_open(v->audio, rate, buff_size);
-   } else
-      v->audio = NULL;
-#else
-   v->audio = NULL;
-#endif
    /* init buffer */
    v->freqt_buff = NULL;
    v->freqt_size = 0;
@@ -740,7 +754,6 @@ void HTS_Vocoder_initialize(HTS_Vocoder * v, const int m, const int stage,
    v->postfilter_size = 0;
    v->spectrum2en_buff = NULL;
    v->spectrum2en_size = 0;
-   v->pade = NULL;
    if (v->stage == 0) {         /* for MCP */
       v->c =
           (double *) HTS_calloc(m * (3 + PADEORDER) + 5 * PADEORDER + 6,
@@ -748,28 +761,6 @@ void HTS_Vocoder_initialize(HTS_Vocoder * v, const int m, const int stage,
       v->cc = v->c + m + 1;
       v->cinc = v->cc + m + 1;
       v->d1 = v->cinc + m + 1;
-      v->pade = (double *) HTS_calloc(21, sizeof(double));
-      v->pade[0] = 1.00000000000;
-      v->pade[1] = 1.00000000000;
-      v->pade[2] = 0.00000000000;
-      v->pade[3] = 1.00000000000;
-      v->pade[4] = 0.00000000000;
-      v->pade[5] = 0.00000000000;
-      v->pade[6] = 1.00000000000;
-      v->pade[7] = 0.00000000000;
-      v->pade[8] = 0.00000000000;
-      v->pade[9] = 0.00000000000;
-      v->pade[10] = 1.00000000000;
-      v->pade[11] = 0.49992730000;
-      v->pade[12] = 0.10670050000;
-      v->pade[13] = 0.01170221000;
-      v->pade[14] = 0.00056562790;
-      v->pade[15] = 1.00000000000;
-      v->pade[16] = 0.49993910000;
-      v->pade[17] = 0.11070980000;
-      v->pade[18] = 0.01369984000;
-      v->pade[19] = 0.00095648530;
-      v->pade[20] = 0.00003041721;
    } else {                     /* for LSP */
       v->c = (double *) HTS_calloc((m + 1) * (v->stage + 3), sizeof(double));
       v->cc = v->c + m + 1;
@@ -783,7 +774,7 @@ void HTS_Vocoder_initialize(HTS_Vocoder * v, const int m, const int stage,
 void HTS_Vocoder_synthesize(HTS_Vocoder * v, const int m, double lf0,
                             double *spectrum, const int nlpf, double *lpf,
                             double alpha, double beta, double volume,
-                            short *rawdata)
+                            short *rawdata, HTS_Audio * audio)
 {
    double x;
    int i, j;
@@ -840,7 +831,7 @@ void HTS_Vocoder_synthesize(HTS_Vocoder * v, const int m, double lf0,
       if (v->stage == 0) {      /* for MCP */
          if (x != 0.0)
             x *= exp(v->c[0]);
-         x = HTS_mlsadf(x, v->c, m, alpha, PADEORDER, v->d1, v->pade);
+         x = HTS_mlsadf(x, v->c, m, alpha, PADEORDER, v->d1);
       } else {                  /* for LSP */
          if (!NGAIN)
             x *= v->c[0];
@@ -857,10 +848,9 @@ void HTS_Vocoder_synthesize(HTS_Vocoder * v, const int m, double lf0,
          xs = (short) x;
       if (rawdata)
          rawdata[rawidx++] = xs;
-#if 0
-      if (v->audio)
-         HTS_Audio_write(v->audio, xs);
-#endif
+      if (audio)
+         HTS_Audio_write(audio, xs);
+
       if (!--i) {
          for (i = 0; i <= m; i++)
             v->c[i] += v->cinc[i];
@@ -929,22 +919,10 @@ void HTS_Vocoder_clear(HTS_Vocoder * v)
          v->spectrum2en_buff = NULL;
       }
       v->spectrum2en_size = 0;
-      if (v->pade != NULL) {
-         HTS_free(v->pade);
-         v->pade = NULL;
-      }
       if (v->c != NULL) {
          HTS_free(v->c);
          v->c = NULL;
       }
-      /* close audio device */
-#if 0
-      if (v->audio != NULL) {
-         HTS_Audio_close(v->audio);
-         HTS_free(v->audio);
-         v->audio = NULL;
-      }
-#endif
       if (v->pulse_list != NULL)
          HTS_free(v->pulse_list);
    }

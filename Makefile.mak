@@ -1,38 +1,32 @@
-# for Windows SDK Ver.7
-# > setenv /x86
-# > nmake -f Makefile.mak
 
-CC = cl
-LIB = lib
-
-#INSTALLDIR = C:\hts_engine_API
+INSTALLDIR = C:\hts_engine_API
 
 all:
 	cd lib
 	nmake /f Makefile.mak
 	cd ..
-	rem cd bin
-	rem nmake /f Makefile.mak
-	rem cd ..
+	cd bin
+	nmake /f Makefile.mak
+	cd ..
 
 clean:
 	cd lib
 	nmake /f Makefile.mak clean
 	cd ..
-	rem cd bin
-	rem nmake /f Makefile.mak clean
-	rem cd ..
+	cd bin
+	nmake /f Makefile.mak clean
+	cd ..
 
-#install::
-#	@if not exist "$(INSTALLDIR)\lib" mkdir "$(INSTALLDIR)\lib"
-#	cd lib
-#	copy *.lib $(INSTALLDIR)\lib
-#	cd ..
-#	@if not exist "$(INSTALLDIR)\bin" mkdir "$(INSTALLDIR)\bin"
-#	cd bin
-#	copy *.exe $(INSTALLDIR)\bin
-#	cd ..
-#	@if not exist "$(INSTALLDIR)\include" mkdir "$(INSTALLDIR)\include"
-#	cd include
-#	copy *.h $(INSTALLDIR)\include
-#	cd ..
+install::
+	@if not exist "$(INSTALLDIR)\lib" mkdir "$(INSTALLDIR)\lib"
+	cd lib
+	copy *.lib $(INSTALLDIR)\lib
+	cd ..
+	@if not exist "$(INSTALLDIR)\bin" mkdir "$(INSTALLDIR)\bin"
+	cd bin
+	copy *.exe $(INSTALLDIR)\bin
+	cd ..
+	@if not exist "$(INSTALLDIR)\include" mkdir "$(INSTALLDIR)\include"
+	cd include
+	copy *.h $(INSTALLDIR)\include
+	cd ..

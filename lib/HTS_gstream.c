@@ -4,7 +4,7 @@
 /*           http://hts-engine.sourceforge.net/                      */
 /* ----------------------------------------------------------------- */
 /*                                                                   */
-/*  Copyright (c) 2001-2010  Nagoya Institute of Technology          */
+/*  Copyright (c) 2001-2011  Nagoya Institute of Technology          */
 /*                           Department of Computer Science          */
 /*                                                                   */
 /*                2001-2008  Tokyo Institute of Technology           */
@@ -74,8 +74,7 @@ void HTS_GStreamSet_create(HTS_GStreamSet * gss, HTS_PStreamSet * pss,
                            int stage, HTS_Boolean use_log_gain,
                            int sampling_rate, int fperiod, double alpha,
                            double beta,
-                           HTS_Boolean * stop, double volume,
-                           int audio_buff_size)
+                           HTS_Boolean * stop, double volume, HTS_Audio * audio)
 {
    int i, j, k;
    int msd_frame;
@@ -131,25 +130,26 @@ void HTS_GStreamSet_create(HTS_GStreamSet * gss, HTS_PStreamSet * pss,
    if (HTS_PStreamSet_get_static_length(pss, 1) != 1)
       HTS_error(1,
                 "HTS_GStreamSet_create: The size of lf0 static vector should be 1.\n");
-   if (gss->nstream == 3 && gss->gstream[2].static_length % 2 == 0)
+   if (gss->nstream >= 3 && gss->gstream[2].static_length % 2 == 0)
       HTS_error(1,
                 "HTS_GStreamSet_create: The number of low-pass filter coefficient should be odd numbers.");
 
    /* synthesize speech waveform */
    HTS_Vocoder_initialize(&v, gss->gstream[0].static_length - 1, stage,
-                          use_log_gain, sampling_rate, fperiod,
-                          audio_buff_size);
-   if (gss->nstream == 3)
+                          use_log_gain, sampling_rate, fperiod);
+   if (gss->nstream >= 3)
       nlpf = (gss->gstream[2].static_length - 1) / 2;
    for (i = 0; i < gss->total_frame && (*stop) == FALSE; i++) {
-      if (gss->nstream == 3)
+      if (gss->nstream >= 3)
          lpf = &gss->gstream[2].par[i][0];
       HTS_Vocoder_synthesize(&v, gss->gstream[0].static_length - 1,
                              gss->gstream[1].par[i][0],
                              &gss->gstream[0].par[i][0], nlpf, lpf, alpha, beta,
-                             volume, &gss->gspeech[i * fperiod]);
+                             volume, &gss->gspeech[i * fperiod], audio);
    }
    HTS_Vocoder_clear(&v);
+   if (audio)
+      HTS_Audio_flush(audio);
 }
 
 /* HTS_GStreamSet_get_total_nsample: get total number of sample */

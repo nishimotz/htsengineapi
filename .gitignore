@@ -9,3 +9,5 @@ bin/hts_engine.exe
 bin/.deps
 lib/.deps
 autom4te.cache
+lib/*.obj
+lib/*.lib
