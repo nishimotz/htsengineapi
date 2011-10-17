@@ -74,7 +74,7 @@ void HTS_GStreamSet_create(HTS_GStreamSet * gss, HTS_PStreamSet * pss,
                            int stage, HTS_Boolean use_log_gain,
                            int sampling_rate, int fperiod, double alpha,
                            double beta,
-                           HTS_Boolean * stop, double volume, HTS_Audio * audio)
+                           HTS_Boolean * stop, double volume, HTS_Audio * audio, double lf0_offset)
 {
    int i, j, k;
    int msd_frame;
@@ -140,10 +140,13 @@ void HTS_GStreamSet_create(HTS_GStreamSet * gss, HTS_PStreamSet * pss,
    if (gss->nstream >= 3)
       nlpf = (gss->gstream[2].static_length - 1) / 2;
    for (i = 0; i < gss->total_frame && (*stop) == FALSE; i++) {
+      double lf0 = gss->gstream[1].par[i][0];
+      if (lf0 > LZERO) 
+         lf0 = lf0 + lf0_offset;
       if (gss->nstream >= 3)
          lpf = &gss->gstream[2].par[i][0];
       HTS_Vocoder_synthesize(&v, gss->gstream[0].static_length - 1,
-                             gss->gstream[1].par[i][0],
+                             lf0 /* gss->gstream[1].par[i][0] */,
                              &gss->gstream[0].par[i][0], nlpf, lpf, alpha, beta,
                              volume, &gss->gspeech[i * fperiod], audio);
    }

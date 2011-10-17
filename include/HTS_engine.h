@@ -615,7 +615,7 @@ void HTS_GStreamSet_create(HTS_GStreamSet * gss, HTS_PStreamSet * pss,
                            int sampling_rate, int fperiod, double alpha,
                            double beta,
                            HTS_Boolean * stop, double volume,
-                           HTS_Audio * audio);
+                           HTS_Audio * audio, double lf0_offset);
 
 /* HTS_GStreamSet_get_total_nsample: get total number of sample */
 int HTS_GStreamSet_get_total_nsample(HTS_GStreamSet * gss);
@@ -667,6 +667,7 @@ typedef struct _HTS_Engine {
    HTS_SStreamSet sss;          /* set of state streams */
    HTS_PStreamSet pss;          /* set of PDF streams */
    HTS_GStreamSet gss;          /* set of generated parameter streams */
+   double lf0_offset;           /* lf0 offset */
 } HTS_Engine;
 
 /*  ----------------------- engine method -------------------------  */
@@ -832,6 +833,9 @@ void HTS_Engine_refresh(HTS_Engine * engine);
 
 /* HTS_Engine_clear: free engine */
 void HTS_Engine_clear(HTS_Engine * engine);
+
+/* HTS_Engine_set_lf0_offset: set lf0 offset */
+void HTS_Engine_set_lf0_offset(HTS_Engine * engine, double f);
 
 /*  -------------------------- vocoder ----------------------------  */
 

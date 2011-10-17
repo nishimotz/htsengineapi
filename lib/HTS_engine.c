@@ -98,6 +98,8 @@ void HTS_Engine_initialize(HTS_Engine * engine, int nstream)
    /* volume */
    engine->global.volume = 1.0;
 
+   engine->lf0_offset = 0.0;
+
 #if 0
    /* initialize audio */
    HTS_Audio_initialize(&engine->audio, engine->global.sampling_rate,
@@ -511,7 +513,7 @@ void HTS_Engine_create_gstream(HTS_Engine * engine)
                          engine->global.audio_buff_size >
                          0 ? &engine->audio : NULL);
 #else
-                        NULL);
+                        NULL, engine->lf0_offset);
 #endif                        
 }
 
@@ -856,6 +858,11 @@ void HTS_show_copyright(FILE * fp)
    return;
 }
 
+/* HTS_Engine_set_lf0_offset: set lf0 offset */
+void HTS_Engine_set_lf0_offset(HTS_Engine * engine, double f)
+{
+    engine->lf0_offset = f;
+}
 HTS_ENGINE_C_END;
 
 #endif                          /* !HTS_ENGINE_C */
