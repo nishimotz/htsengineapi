@@ -513,7 +513,7 @@ void HTS_Engine_create_gstream(HTS_Engine * engine)
                          engine->global.audio_buff_size >
                          0 ? &engine->audio : NULL);
 #else
-                        NULL, engine->lf0_offset);
+                        NULL, engine->lf0_offset, engine->lf0_amp);
 #endif                        
 }
 
@@ -859,9 +859,10 @@ void HTS_show_copyright(FILE * fp)
 }
 
 /* HTS_Engine_set_lf0_offset: set lf0 offset */
-void HTS_Engine_set_lf0_offset(HTS_Engine * engine, double f)
+void HTS_Engine_set_lf0_offset_amp(HTS_Engine * engine, double offset, double amp)
 {
-    engine->lf0_offset = f;
+    engine->lf0_offset = offset;
+    engine->lf0_amp = amp;
 }
 HTS_ENGINE_C_END;
 

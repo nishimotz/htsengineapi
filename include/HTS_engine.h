@@ -668,6 +668,7 @@ typedef struct _HTS_Engine {
    HTS_PStreamSet pss;          /* set of PDF streams */
    HTS_GStreamSet gss;          /* set of generated parameter streams */
    double lf0_offset;           /* lf0 offset */
+   double lf0_amp;              /* lf0 amp */
 } HTS_Engine;
 
 /*  ----------------------- engine method -------------------------  */
@@ -835,7 +836,7 @@ void HTS_Engine_refresh(HTS_Engine * engine);
 void HTS_Engine_clear(HTS_Engine * engine);
 
 /* HTS_Engine_set_lf0_offset: set lf0 offset */
-void HTS_Engine_set_lf0_offset(HTS_Engine * engine, double f);
+void HTS_Engine_set_lf0_offset_amp(HTS_Engine * engine, double offset, double amp);
 
 /*  -------------------------- vocoder ----------------------------  */
 
