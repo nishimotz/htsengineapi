@@ -615,7 +615,8 @@ void HTS_GStreamSet_create(HTS_GStreamSet * gss, HTS_PStreamSet * pss,
                            int sampling_rate, int fperiod, double alpha,
                            double beta,
                            HTS_Boolean * stop, double volume,
-                           HTS_Audio * audio, double lf0_offset);
+                           HTS_Audio * audio, double lf0_offset,
+						   double lf0_amp);
 
 /* HTS_GStreamSet_get_total_nsample: get total number of sample */
 int HTS_GStreamSet_get_total_nsample(HTS_GStreamSet * gss);
