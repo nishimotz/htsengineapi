@@ -72,23 +72,26 @@ HTS_HIDDEN_H_START;
 /* HTS_error: output error message */
 void HTS_error(const int error, char *message, ...);
 
-/* HTS_get_fp: wrapper for fopen */
-FILE *HTS_get_fp(const char *name, const char *opt);
+/* HTS_fgetc: wrapper for fgetc */
+int HTS_fgetc(HTS_File * fp);
+
+/* HTS_feof: wrapper for feof */
+int HTS_feof(HTS_File * fp);
 
 /* HTS_get_pattern_token: get pattern token */
-void HTS_get_pattern_token(FILE * fp, char *buff);
+HTS_Boolean HTS_get_pattern_token(HTS_File * fp, char *buff);
 
 /* HTS_get_token: get token (separator are space,tab,line break) */
-HTS_Boolean HTS_get_token(FILE * fp, char *buff);
+HTS_Boolean HTS_get_token(HTS_File * fp, char *buff);
 
 /* HTS_get_token_from_string: get token from string (separator are space,tab,line break) */
 HTS_Boolean HTS_get_token_from_string(char *string, int *index, char *buff);
 
 /* HTS_fwrite_little_endian: fwrite with byteswap */
-int HTS_fwrite_little_endian(void *p, const int size, const int num, FILE * fp);
+int HTS_fwrite_little_endian(void *p, const int size, const int num, HTS_File * fp);
 
 /* HTS_fread_big_endiana: fread with byteswap */
-int HTS_fread_big_endian(void *p, const int size, const int num, FILE * fp);
+int HTS_fread_big_endian(void *p, const int size, const int num, HTS_File * fp);
 
 /* HTS_calloc: wrapper for calloc */
 char *HTS_calloc(const size_t num, const size_t size);
@@ -150,7 +153,7 @@ void HTS_free(void *p);
 #define IRLENG    96
 #endif                          /* HTS_EMBEDDED */
 
-#define PULSELISTSIZE 512
+#define PULSELISTSIZE 1024
 
 /* for MGLSA filter */
 #define NORMFLG1 TRUE

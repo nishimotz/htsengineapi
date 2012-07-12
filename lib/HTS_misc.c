@@ -110,48 +110,89 @@ void HTS_error(const int error, char *message, ...)
       exit(error);
 }
 
-/* HTS_get_fp: wrapper for fopen */
-FILE *HTS_get_fp(const char *name, const char *opt)
+/* HTS_fopen: wrapper for fopen */
+HTS_File *HTS_fopen(const char *name, const char *opt)
 {
-   FILE *fp = fopen(name, opt);
+   HTS_File *fp = fopen(name, opt);
 
-   if (fp == NULL)
-      HTS_error(2, "HTS_get_fp: Cannot open %s.\n", name);
+   if (fp == NULL) {
+      HTS_error(1, "HTS_fopen: Cannot open %s.\n", name);
+      return NULL;
+   }
 
-   return (fp);
+   return fp;
+}
+
+/* HTS_fgetc: wrapper for fgetc */
+int HTS_fgetc(HTS_File * fp)
+{
+   return fgetc(fp);
+}
+
+/* HTS_feof: wrapper for feof */
+int HTS_feof(HTS_File * fp)
+{
+   return feof(fp);
+}
+
+/* HTS_fread: wrapper for fread */
+size_t HTS_fread(void *buf, size_t size, size_t n, HTS_File * fp)
+{
+   return fread(buf, size, n, fp);
+}
+
+/* HTS_fwrite: wrapper for fwrite */
+size_t HTS_fwrite(const void *buf, size_t size, size_t n, HTS_File * fp)
+{
+   return fwrite(buf, size, n, fp);
+}
+
+/* HTS_fclose: wrapper for fclose */
+void HTS_fclose(HTS_File * fp)
+{
+   fclose(fp);
 }
 
 /* HTS_get_pattern_token: get pattern token */
-void HTS_get_pattern_token(FILE * fp, char *buff)
+HTS_Boolean HTS_get_pattern_token(HTS_File * fp, char *buff)
 {
    char c;
    int i;
    HTS_Boolean squote = FALSE, dquote = FALSE;
 
-   c = fgetc(fp);
+   if (fp == NULL || HTS_feof(fp))
+      return FALSE;
+   c = HTS_fgetc(fp);
 
-   while (c == ' ' || c == '\n')
-      c = fgetc(fp);
+   while (c == ' ' || c == '\n') {
+      if (HTS_feof(fp))
+         return FALSE;
+      c = HTS_fgetc(fp);
+   }
 
    if (c == '\'') {             /* single quote case */
-      c = fgetc(fp);
+      if (HTS_feof(fp))
+         return FALSE;
+      c = HTS_fgetc(fp);
       squote = TRUE;
    }
 
    if (c == '\"') {             /*double quote case */
-      c = fgetc(fp);
+      if (HTS_feof(fp))
+         return FALSE;
+      c = HTS_fgetc(fp);
       dquote = TRUE;
    }
 
    if (c == ',') {              /*special character ',' */
       strcpy(buff, ",");
-      return;
+      return TRUE;
    }
 
    i = 0;
    while (1) {
       buff[i++] = c;
-      c = fgetc(fp);
+      c = HTS_fgetc(fp);
       if (squote && c == '\'')
          break;
       if (dquote && c == '\"')
@@ -161,39 +202,42 @@ void HTS_get_pattern_token(FILE * fp, char *buff)
             break;
          if (c == '\n')
             break;
-         if (feof(fp))
+         if (HTS_feof(fp))
             break;
       }
-   }
-
-   buff[i] = '\0';
-}
-
-/* HTS_get_token: get token (separator are space,tab,line break) */
-HTS_Boolean HTS_get_token(FILE * fp, char *buff)
-{
-   char c;
-   int i;
-
-   if (feof(fp))
-      return FALSE;
-   c = fgetc(fp);
-   while (c == ' ' || c == '\n' || c == '\t') {
-      if (feof(fp))
-         return FALSE;
-      c = getc(fp);
-   }
-
-   for (i = 0; c != ' ' && c != '\n' && c != '\t' && !feof(fp); i++) {
-      buff[i] = c;
-      c = fgetc(fp);
    }
 
    buff[i] = '\0';
    return TRUE;
 }
 
-/* HTS_get_token_from_string: get token from string (separator are space,tab,line break) */
+/* HTS_get_token: get token (separators are space, tab, and line break) */
+HTS_Boolean HTS_get_token(HTS_File * fp, char *buff)
+{
+   char c;
+   int i;
+
+   if (fp == NULL || HTS_feof(fp))
+      return FALSE;
+   c = HTS_fgetc(fp);
+   while (c == ' ' || c == '\n' || c == '\t') {
+      if (HTS_feof(fp))
+         return FALSE;
+      c = HTS_fgetc(fp);
+   }
+
+   for (i = 0; c != ' ' && c != '\n' && c != '\t';) {
+      buff[i++] = c;
+      if (HTS_feof(fp))
+         break;
+      c = HTS_fgetc(fp);
+   }
+
+   buff[i] = '\0';
+   return TRUE;
+}
+
+/* HTS_get_token_from_string: get token from string (separators are space, tab, and line break) */
 HTS_Boolean HTS_get_token_from_string(char *string, int *index, char *buff)
 {
    char c;
@@ -220,9 +264,9 @@ HTS_Boolean HTS_get_token_from_string(char *string, int *index, char *buff)
 }
 
 /* HTS_fread_big_endian: fread with byteswap */
-int HTS_fread_big_endian(void *p, const int size, const int num, FILE * fp)
+int HTS_fread_big_endian(void *p, const int size, const int num, HTS_File * fp)
 {
-   const int block = fread(p, size, num, fp);
+   const int block = HTS_fread(p, size, num, fp);
 
 #ifdef WORDS_LITTLEENDIAN
    HTS_byte_swap(p, size, block);
@@ -232,14 +276,14 @@ int HTS_fread_big_endian(void *p, const int size, const int num, FILE * fp)
 }
 
 /* HTS_fwrite_little_endian: fwrite with byteswap */
-int HTS_fwrite_little_endian(void *p, const int size, const int num, FILE * fp)
+int HTS_fwrite_little_endian(void *p, const int size, const int num, HTS_File * fp)
 {
    const int block = num * size;
 
 #ifdef WORDS_BIGENDIAN
    HTS_byte_swap(p, size, block);
 #endif                          /* WORDS_BIGENDIAN */
-   fwrite(p, size, num, fp);
+   HTS_fwrite(p, size, num, fp);
 
    return block;
 }
