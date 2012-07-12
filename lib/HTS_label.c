@@ -105,25 +105,25 @@ static void HTS_Label_check_time(HTS_Label * label)
 }
 
 /* HTS_Label_load_from_fn: load label from file name */
-void HTS_Label_load_from_fn(HTS_Label * label, int sampling_rate, int fperiod,
-                            char *fn)
+void HTS_Label_load_from_fn(HTS_Label * label, int sampling_rate, int fperiod, char *fn)
 {
-   FILE *fp = HTS_get_fp(fn, "r");
+   HTS_File *fp = HTS_fopen(fn, "r");
    HTS_Label_load_from_fp(label, sampling_rate, fperiod, fp);
-   fclose(fp);
+   HTS_fclose(fp);
 }
 
 /* HTS_Label_load_from_fp: load label from file pointer */
-void HTS_Label_load_from_fp(HTS_Label * label, int sampling_rate, int fperiod,
-                            FILE * fp)
+void HTS_Label_load_from_fp(HTS_Label * label, int sampling_rate, int fperiod, HTS_File * fp)
 {
    char buff[HTS_MAXBUFLEN];
    HTS_LabelString *lstring = NULL;
    double start, end;
    const double rate = (double) sampling_rate / ((double) fperiod * 1e+7);
 
-   if (label->head || label->size != 0)
+   if (label->head || label->size != 0) {
       HTS_error(1, "HTS_Label_load_from_fp: label is not initialized.\n");
+      return;
+   }
    /* parse label file */
    while (HTS_get_token(fp, buff)) {
       if (!isgraph((int) buff[0]))
@@ -131,8 +131,7 @@ void HTS_Label_load_from_fp(HTS_Label * label, int sampling_rate, int fperiod,
       label->size++;
 
       if (lstring) {
-         lstring->next =
-             (HTS_LabelString *) HTS_calloc(1, sizeof(HTS_LabelString));
+         lstring->next = (HTS_LabelString *) HTS_calloc(1, sizeof(HTS_LabelString));
          lstring = lstring->next;
       } else {                  /* first time */
          lstring = (HTS_LabelString *) HTS_calloc(1, sizeof(HTS_LabelString));
@@ -156,8 +155,7 @@ void HTS_Label_load_from_fp(HTS_Label * label, int sampling_rate, int fperiod,
 }
 
 /* HTS_Label_load_from_string: load label from string */
-void HTS_Label_load_from_string(HTS_Label * label, int sampling_rate,
-                                int fperiod, char *data)
+void HTS_Label_load_from_string(HTS_Label * label, int sampling_rate, int fperiod, char *data)
 {
    char buff[HTS_MAXBUFLEN];
    HTS_LabelString *lstring = NULL;
@@ -165,8 +163,10 @@ void HTS_Label_load_from_string(HTS_Label * label, int sampling_rate,
    double start, end;
    const double rate = (double) sampling_rate / ((double) fperiod * 1e+7);
 
-   if (label->head || label->size != 0)
+   if (label->head || label->size != 0) {
       HTS_error(1, "HTS_Label_load_from_fp: label list is not initialized.\n");
+      return;
+   }
    /* copy label */
    while (HTS_get_token_from_string(data, &data_index, buff)) {
       if (!isgraph((int) buff[0]))
@@ -174,8 +174,7 @@ void HTS_Label_load_from_string(HTS_Label * label, int sampling_rate,
       label->size++;
 
       if (lstring) {
-         lstring->next =
-             (HTS_LabelString *) HTS_calloc(1, sizeof(HTS_LabelString));
+         lstring->next = (HTS_LabelString *) HTS_calloc(1, sizeof(HTS_LabelString));
          lstring = lstring->next;
       } else {                  /* first time */
          lstring = (HTS_LabelString *) HTS_calloc(1, sizeof(HTS_LabelString));
@@ -199,8 +198,7 @@ void HTS_Label_load_from_string(HTS_Label * label, int sampling_rate,
 }
 
 /* HTS_Label_load_from_string_list: load label from string list */
-void HTS_Label_load_from_string_list(HTS_Label * label, int sampling_rate,
-                                     int fperiod, char **data, int size)
+void HTS_Label_load_from_string_list(HTS_Label * label, int sampling_rate, int fperiod, char **data, int size)
 {
    char buff[HTS_MAXBUFLEN];
    HTS_LabelString *lstring = NULL;
@@ -209,8 +207,10 @@ void HTS_Label_load_from_string_list(HTS_Label * label, int sampling_rate,
    double start, end;
    const double rate = (double) sampling_rate / ((double) fperiod * 1e+7);
 
-   if (label->head || label->size != 0)
+   if (label->head || label->size != 0) {
       HTS_error(1, "HTS_Label_load_from_fp: label list is not initialized.\n");
+      return;
+   }
    /* copy label */
    for (i = 0; i < size; i++) {
       if (!isgraph((int) data[i][0]))
@@ -218,8 +218,7 @@ void HTS_Label_load_from_string_list(HTS_Label * label, int sampling_rate,
       label->size++;
 
       if (lstring) {
-         lstring->next =
-             (HTS_LabelString *) HTS_calloc(1, sizeof(HTS_LabelString));
+         lstring->next = (HTS_LabelString *) HTS_calloc(1, sizeof(HTS_LabelString));
          lstring = lstring->next;
       } else {                  /* first time */
          lstring = (HTS_LabelString *) HTS_calloc(1, sizeof(HTS_LabelString));
@@ -232,7 +231,7 @@ void HTS_Label_load_from_string_list(HTS_Label * label, int sampling_rate,
          HTS_get_token_from_string(data[i], &data_index, buff);
          end = atof(buff);
          HTS_get_token_from_string(data[i], &data_index, buff);
-         lstring->name = HTS_strdup(&buff[data_index]);
+         lstring->name = HTS_strdup(buff);
          lstring->start = rate * start;
          lstring->end = rate * end;
       } else {
