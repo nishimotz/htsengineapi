@@ -1,3 +1,52 @@
+2011-12-20 23:46  uratec
+
+	* AUTHORS, ChangeLog, README: Fix documents.
+
+2011-12-20 13:18  uratec
+
+	* ChangeLog, include/HTS_engine.h: Fix macro
+
+2011-12-20 11:24  uratec
+
+	* ChangeLog, NEWS, README, configure.ac, include/HTS_engine.h:
+	  Update documents to version 1.06
+
+2011-12-20 11:21  uratec
+
+	* lib/HTS_misc.c: Fix a tiny bug of file loading
+
+2011-12-12 13:02  uratec
+
+	* ChangeLog, include/HTS_engine.h, lib/HTS_engine.c,
+	  lib/HTS_gstream.c, lib/HTS_hidden.h, lib/HTS_label.c,
+	  lib/HTS_misc.c, lib/HTS_model.c, lib/HTS_pstream.c,
+	  lib/HTS_sstream.c, lib/HTS_vocoder.c: Change many function from
+	  void to boolean.
+
+2011-12-12 11:21  uratec
+
+	* ChangeLog, bin/hts_engine.c, include/HTS_engine.h,
+	  lib/HTS_audio.c, lib/HTS_engine.c, lib/HTS_gstream.c,
+	  lib/HTS_hidden.h, lib/HTS_label.c, lib/HTS_misc.c,
+	  lib/HTS_model.c, lib/HTS_pstream.c, lib/HTS_sstream.c,
+	  lib/HTS_vocoder.c: Change source format.
+
+2011-12-12 11:15  uratec
+
+	* ChangeLog, bin/hts_engine.c, include/HTS_engine.h,
+	  lib/HTS_engine.c, lib/HTS_hidden.h, lib/HTS_label.c,
+	  lib/HTS_misc.c, lib/HTS_model.c, lib/HTS_sstream.c: Add FILE
+	  wrapper. Modify state duration calculation.
+
+2011-08-10 21:16  uratec
+
+	* ChangeLog, configure.ac, lib/HTS_label.c: fix a small bug in
+	  label loader.
+
+2011-08-10 21:14  uratec
+
+	* lib/HTS_audio.c: remove warning message of PortAudio.
+
 2011-07-07 08:05  uratec
 
 	* ChangeLog, NEWS, README, configure.ac, include/HTS_engine.h,

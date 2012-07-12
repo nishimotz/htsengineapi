@@ -1,6 +1,6 @@
 ===============================================================================
-      The HMM-Based Speech Synthesis Engine "hts_engine API" version 1.05
-                             release July 7, 2011
+      The HMM-Based Speech Synthesis Engine "hts_engine API" version 1.06
+                           release December 25, 2011
 
 
 The hts_engine API is an API version of hts_engine which has been released
@@ -12,7 +12,7 @@ Technology (see "AUTHORS" in the same directory).
                                     Copying
 *******************************************************************************
 
-The hts_engine API is released under the New and Simplified BSD license (see
+The hts_engine API is released under the Modified BSD license (see
 http://www.opensource.org/). Using and distributing this software is free
 (without restriction including without limitation the rights to use, copy,
 modify, merge, publish, distribute, sublicense, and/or sell copies of this
