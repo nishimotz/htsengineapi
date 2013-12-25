@@ -5,9 +5,9 @@ all:
 	cd lib
 	nmake /f Makefile.mak
 	cd ..
-	cd bin
-	nmake /f Makefile.mak
-	cd ..
+	rem cd bin
+	rem nmake /f Makefile.mak
+	rem cd ..
 
 clean:
 	cd lib

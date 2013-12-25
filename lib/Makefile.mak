@@ -1,6 +1,4 @@
 
-CC = cl
-
 CFLAGS = /O2 /Ob2 /Oi /Ot /Oy /GT /GL /TC /I ..\include
 LFLAGS = /LTCG
 
@@ -12,7 +10,7 @@ hts_engine_API.lib: $(CORES)
 	lib $(LFLAGS) /OUT:$@ $(CORES)
 
 .c.obj:
-	$(CC) $(CFLAGS) /c $<
+	cl $(CFLAGS) /c $<
 
 clean:
 	del *.lib
